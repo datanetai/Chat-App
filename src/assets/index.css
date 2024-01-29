@@ -1,0 +1,57 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root[data-theme="light"] {
+    --text: #22020e;
+    --text2: #fddde9;
+    --background: #fdddea;
+    --primary: #9d0606;
+    --secondary: #f55c5c;
+    --accent: #4d0000;
+}
+
+:root[data-theme="dark"] {
+    --text: #fddde9;
+    --text2: #22020e;
+    --background: #22020f;
+    --primary: #f96262;
+    --secondary: #a30a0a;
+    --accent: #ffb3b3;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+
+
+@layer components {
+    .form-label {
+        @apply mb-1;
+    }
+}
+
+router-link {
+    text-decoration: none;
+    color: var(--text);
+
+}
+
+router-link:hover {
+    text-decoration: underline;
+}
+
+router-link.active {
+    text-decoration: underline;
+}

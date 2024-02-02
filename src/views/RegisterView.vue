@@ -34,6 +34,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
+import app from '@/firebase'; // adjust the path based on your project structure
+
 
 export default defineComponent({
     data() {
@@ -46,6 +48,35 @@ export default defineComponent({
         };
     },
     methods: {
+        // async register() {
+        //     try {
+        //         if (this.password !== this.confirmPassword) {
+        //             this.errorMessage = 'Passwords do not match';
+        //             return;
+        //         }
+
+        //         const response = await axios.post(process.env.VUE_APP_SERVER_IP + '/register', {
+        //             username: this.username,
+        //             email: this.email,
+        //             password: this.password
+        //         }, {
+        //             withCredentials: true,
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
+        //         if (response.status === 201) {
+
+        //             this.$router.push('/login');
+        //         } else {
+        //             this.errorMessage = response.data.message;
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //         this.errorMessage = 'An error occurred during registration.';
+        //     }
+        // }
+
         async register() {
             try {
                 if (this.password !== this.confirmPassword) {
@@ -53,21 +84,12 @@ export default defineComponent({
                     return;
                 }
 
-                const response = await axios.post(process.env.VUE_APP_SERVER_IP + '/register', {
-                    username: this.username,
-                    email: this.email,
-                    password: this.password
-                }, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (response.status === 201) {
-
+                const userCredential = await app.auth().createUserWithEmailAndPassword(this.email, this.password);
+                const user = userCredential.user;
+                if (user) {
                     this.$router.push('/login');
                 } else {
-                    this.errorMessage = response.data.message;
+                    this.errorMessage = 'Registration failed.';
                 }
             } catch (error) {
                 console.error(error);

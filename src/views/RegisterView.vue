@@ -34,8 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import app from '@/firebase'; // adjust the path based on your project structure
-
+import { auth, createUserWithEmailAndPassword } from '@/firebase';
 
 export default defineComponent({
     data() {
@@ -84,7 +83,7 @@ export default defineComponent({
                     return;
                 }
 
-                const userCredential = await app.auth().createUserWithEmailAndPassword(this.email, this.password);
+                const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
                 const user = userCredential.user;
                 if (user) {
                     this.$router.push('/login');

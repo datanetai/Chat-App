@@ -26,6 +26,7 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import router from '../router'; // make sure to import your router
+import { auth, signInWithEmailAndPassword } from '@/firebase';
 
 export default defineComponent({
     data() {
@@ -37,24 +38,18 @@ export default defineComponent({
     },
     methods: {
         async login() {
-            this.errorMessage = ''; // reset the error message at the start of a new login attempt
             try {
-                const response = await axios.post('http://localhost:3000/login', {
-                    email: this.username,
-                    password: this.password
-                }, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                console.log(response.data);
-                router.push('/chat'); // navigate to the chat route when the login is successful
+                const userCredential = await signInWithEmailAndPassword(auth, this.username, this.password);
+                const user = userCredential.user;
+                console.log("user", user)
+                if (user) {
+                    router.push('/');
+                }
             } catch (error) {
                 this.errorMessage = (error as Error).message;
             }
         }
+
     }
 });
 </script>

@@ -47,34 +47,6 @@ export default defineComponent({
         };
     },
     methods: {
-        // async register() {
-        //     try {
-        //         if (this.password !== this.confirmPassword) {
-        //             this.errorMessage = 'Passwords do not match';
-        //             return;
-        //         }
-
-        //         const response = await axios.post(process.env.VUE_APP_SERVER_IP + '/register', {
-        //             username: this.username,
-        //             email: this.email,
-        //             password: this.password
-        //         }, {
-        //             withCredentials: true,
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             }
-        //         });
-        //         if (response.status === 201) {
-
-        //             this.$router.push('/login');
-        //         } else {
-        //             this.errorMessage = response.data.message;
-        //         }
-        //     } catch (error) {
-        //         console.error(error);
-        //         this.errorMessage = 'An error occurred during registration.';
-        //     }
-        // }
 
         async register() {
             try {
@@ -85,6 +57,8 @@ export default defineComponent({
 
                 const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
                 const user = userCredential.user;
+                console.log("user", user)
+
                 if (user) {
                     this.$router.push('/login');
                 } else {

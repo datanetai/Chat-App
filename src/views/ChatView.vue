@@ -30,6 +30,8 @@ import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatMessage } from '@/types';
+import { addMessage } from '@/firestoreService'; // Adjust the path as necessary
+import { getMessagesBySessionId } from '@/firestoreService'; // Adjust the path as necessary
 
 
 export default defineComponent({
@@ -58,25 +60,15 @@ export default defineComponent({
         const sessionId = ref<string>(uuidv4()); // Generate a new UUID when the component is created
 
         const loadMessages = async () => {
-            try {
-                const response = await axios.get(process.env.VUE_APP_SERVER_IP + '/chat', {
-                    withCredentials: true,
+            const sessionMessages = await getMessagesBySessionId(sessionId.value);
+            sessionMessages.forEach(message => {
+                messages.value.push({
+                    id: message.id, // You might need to adjust how IDs are handled
+                    text: message.message,
+                    type: message.type
                 });
-                // parsing
-                if (response.status !== 200) {
-                    console.error('Error loading messages:', response);
-                    return;
-                }
-                const serverMessages = response.data;
-                for (const message of serverMessages) {
-                    console.log('Message:', message);
-                    messages.value.push({ id: message.id, text: message.message, type: message.type });
-                }
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            }
+            });
         };
-
         // Define a function to post a message to the server
         const postMessage = async (message: string, type: string) => {
             try {
@@ -175,11 +167,11 @@ export default defineComponent({
 
             if (msg.trim() !== '') {
                 messages.value.push({ id: Date.now(), text: msg, type: 'sent' });
-                await postMessage(msg, 'sent');
+                await addMessage(sessionId.value, msg, 'sent');
                 try {
                     const reply = await generateReply(msg);
                     // post
-                    await postMessage(reply, 'received');
+                    await addMessage(sessionId.value, reply, 'received');
                     console.log('Reply:', reply);
                     messages.value.push({ id: Date.now() + 1, text: reply, type: 'received' });
                     scrollToEnd();

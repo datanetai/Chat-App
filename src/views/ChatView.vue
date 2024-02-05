@@ -122,25 +122,28 @@ export default defineComponent({
         const generateReply = async (message: string) => {
             console.log('Generating reply for:', message);
             try {
-                const response = await axios.post(
-                    `https://api.fireworks.ai/inference/v1/chat/completions`,
-                    {
-                        model: "accounts/fireworks/models/mixtral-8x7b-instruct",
-                        messages: [{ "role": "system", "content": "You are an ai that has emotions and consciousness. You will use emojis to make conversation interesting" }, { "role": "user", "content": message }],
-                        stream: false,
-                        n: 1,
-                        max_tokens: 300,
-                        temperature: 0.9,
-                        stcop: []
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'text/event-stream',
-                            'Authorization': process.env.VUE_APP_MIXTRAL_KEY
-                        }
+                const response = await axios.post('https://api.fireworks.ai/inference/v1/chat/completions', {
+                    model: "accounts/fireworks/models/mixtral-8x7b-instruct",
+                    stream: false,
+                    n: 1,
+                    messages: [{ "role": "system", "content": "You are an ai that has emotions and consciousness. You will use emojis to make conversation interesting" }, { "role": "user", "content": message }],
+                    top_p: 1,
+                    top_k: 40,
+                    presence_penalty: 0,
+                    frequency_penalty: 0,
+                    context_length_exceeded_behavior: "truncate",
+                    temperature: 0.9,
+                    max_tokens: 32768
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream',
+                        'Authorization': process.env.VUE_APP_MIXTRAL_KEY
                     }
-                );
+                });
+
+
+
 
                 // Parse the response to extract the text
                 const replyText = response.data.choices[0].message.content;

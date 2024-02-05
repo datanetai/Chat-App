@@ -1,4 +1,3 @@
-// ChatView.vue
 <template>
     <div class="home">
         <ChatExamples class="examples" v-if="messages.length === 0" @questionClicked="exampleClickedHandler" />
@@ -21,7 +20,6 @@
         </div>
     </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, computed, ref, watch, nextTick } from 'vue';
 import ChatExamples from '@/components/ChatExamples.vue';
@@ -41,6 +39,9 @@ export default defineComponent({
         ChatMessageComponent,
     },
     setup() {
+        /**
+         * Reactive state and computed properties
+         */
         const themeStore = useThemeStore();
 
         const currentTheme = computed(() => themeStore.getTheme);
@@ -58,6 +59,9 @@ export default defineComponent({
 
         const sessionId = ref<string>(uuidv4()); // Generate a new UUID when the component is created
 
+        /**
+         * Load messages from Firestore based on the session ID
+         */
         const loadMessages = async () => {
             const sessionMessages = await getMessagesBySessionId(sessionId.value);
             sessionMessages.forEach(message => {
@@ -70,13 +74,18 @@ export default defineComponent({
         };
 
 
-        // Define a function to clear the messages array and generate a new sessionId
+        /**
+         * Clear the messages array and generate a new session ID
+         */
         const clearMessages = () => {
             messages.value = [];
             sessionId.value = uuidv4(); // Generate a new UUID when the messages are cleared
         };
 
-        // Define a function to edit a message in the messages array
+        /**
+         * Edit a message in the messages array
+         * @param message - The message to be edited
+         */
         const editMessage = (message: ChatMessage) => {
             const index = messages.value.findIndex((m) => m.id === message.id);
             if (index !== -1) {
@@ -86,13 +95,20 @@ export default defineComponent({
             messages.value.push({ id: Date.now(), text: 'Received: ' + message.text, type: 'received' });
         };
 
-        // Define a function to handle the exampleClicked event from the Example component
+        /**
+         * Handle the exampleClicked event from the Example component
+         * @param title - The title of the clicked example
+         */
         const exampleClickedHandler = (title: string) => {
             console.log('Example clicked:', title);
             newMessage.value = title;
         };
 
-        // Define a function to generate a reply using the Google Generative AI
+        /**
+         * Generate a reply using the Google Generative AI
+         * @param message - The message to generate a reply for
+         * @returns The generated reply
+         */
         const generateReply = async (message: string) => {
             console.log('Generating reply for:', message);
             try {
@@ -116,9 +132,6 @@ export default defineComponent({
                     }
                 });
 
-
-
-
                 // Parse the response to extract the text
                 const replyText = response.data.choices[0].message.content;
                 return replyText;
@@ -128,7 +141,10 @@ export default defineComponent({
             }
         };
 
-        // Define a function to send a message and generate a reply
+        /**
+         * Send a message and generate a reply
+         * @param title - Optional title of the message
+         */
         const sendMessage = async (title?: string) => {
             console.log('Sending message:', isGeneratingReply.value);
             if (isGeneratingReply.value) {
@@ -162,7 +178,10 @@ export default defineComponent({
                 }
             }
         };
-        // Define a function to scroll to the end of the messages container
+
+        /**
+         * Scroll to the end of the messages container
+         */
         const scrollToEnd = () => {
             nextTick(() => {
                 const container = document.querySelector('.message-container') as HTMLElement;
@@ -172,7 +191,9 @@ export default defineComponent({
             });
         };
 
-        // Watch the messages array for changes and call the scrollToEnd function
+        /**
+         * Watch the messages array for changes and call the scrollToEnd function
+         */
         watch(messages, () => {
             scrollToEnd();
         });
@@ -180,7 +201,10 @@ export default defineComponent({
         // Call the loadMessages function when the component is created
         loadMessages();
         let isGeneratingReply = ref<boolean>(false);
-        // return everything that needs to be reactive or used in the template
+
+        /**
+         * Return reactive data and functions to be used in the template
+         */
         return {
             currentTheme,
             svgFilter,
@@ -194,9 +218,15 @@ export default defineComponent({
         };
     },
     computed: {
+        /**
+         * Compute the background color of the input based on the current theme
+         */
         inputbackgroundColor(): string {
             return this.currentTheme === 'dark' ? '#1f1f1f' : '#f5f5f5';
         },
+        /**
+         * Compute the text color of the input based on the current theme
+         */
         inputTextColor(): string {
             return this.currentTheme === 'dark' ? '#f5f5f5' : '#1f1f1f';
         },

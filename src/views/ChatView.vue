@@ -50,8 +50,7 @@ export default defineComponent({
         });
 
         const messages = ref<ChatMessage[]>([
-            { id: 1, text: 'Hello, this is a dummy message.', type: 'sent' },
-            { id: 2, text: 'Hi, this is a dummy reply.', type: 'received' },
+
         ]);
 
         const newMessage = ref<string>('');
@@ -69,32 +68,7 @@ export default defineComponent({
                 });
             });
         };
-        // Define a function to post a message to the server
-        const postMessage = async (message: string, type: string) => {
-            try {
-                const response = await axios.post(
-                    process.env.VUE_APP_SERVER_IP + '/chat',
-                    {
-                        message: message,
-                        type: type,
-                        session_id: sessionId.value,
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        withCredentials: true,
-                    }
-                );
-                if (response.status === 200) {
-                    console.log('Message sent successfully');
-                } else {
-                    console.error('Error sending message:', response);
-                }
-            } catch (error) {
-                console.error('Error sending message:', error);
-            }
-        };
+
 
         // Define a function to clear the messages array and generate a new sessionId
         const clearMessages = () => {
@@ -115,7 +89,7 @@ export default defineComponent({
         // Define a function to handle the exampleClicked event from the Example component
         const exampleClickedHandler = (title: string) => {
             console.log('Example clicked:', title);
-            sendMessage(title);
+            newMessage.value = title;
         };
 
         // Define a function to generate a reply using the Google Generative AI

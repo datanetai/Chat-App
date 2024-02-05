@@ -6,6 +6,7 @@
         </div>
         <div class="theme-toggle">
             <button @click="toggleTheme">Toggle Theme</button>
+            <button @click="$emit('toggleChatHistory')">Toggle Chat History</button>
         </div>
     </nav>
 </template>
@@ -44,8 +45,6 @@ nav {
     display: flex;
     align-items: center;
 }
-
-
 
 button {
     padding: 0.5rem 1rem;

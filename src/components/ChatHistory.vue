@@ -1,7 +1,7 @@
 
 <template>
     <div>
-        <h2 class="text-2xl font-bold mb-4">Chat History</h2>
+        <h2 class="text-2xl font-bold m-4 line-below">Chat History</h2>
         <ul>
             <li v-for="message in messages" :key="message.id" class="mb-4">
                 <h3 class="text-lg font-semibold">{{ message.title }}</h3>
@@ -30,7 +30,10 @@ export default {
     },
 };
 </script>
-
-<style>
-/* Add your custom styles here */
+<style scoped>
+.line-below {
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    /* Adjust this value to move the line further below */
+}
 </style>

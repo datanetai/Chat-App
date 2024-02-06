@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <ChatExamples class="examples" v-if="messages.length === 0" @questionClicked="exampleClickedHandler" />
-        <div class="message-container" ref="messagesContainer" :style="{ height: messageContainerHeight }">
+        <div class="message-container" ref="messagesContainer" :style="{ height: messageContainerHeight() }">
             <div class="messages">
                 <ChatMessageComponent v-for="message in messages" :key="message.id" :message="message"
                     @update-message="editMessage" />
@@ -202,7 +202,7 @@ export default defineComponent({
         loadMessages();
         let isGeneratingReply = ref<boolean>(false);
         const messageContainerHeight = () => {
-            return messages.value.length > 0 ? '70%' : '30vh';
+            return messages.value.length > 0 ? '70vh' : '30vh';
         }
         /**
  * Return reactive data and functions to be used in the template

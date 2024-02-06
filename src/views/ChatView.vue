@@ -14,8 +14,8 @@
             </button>
             <input type="text" placeholder="Type your message here..." class="input flex-grow p-2 border rounded"
                 :style="{ backgroundColor: inputbackgroundColor, color: inputTextColor }" v-model="newMessage"
-                @keyup.enter="sendMessage">
-            <button class="send-button ml-1" @click="sendMessage" v-bind:disabled="isGeneratingReply">
+                @keyup.enter="event => sendMessage()">
+            <button class="send-button ml-1" @click="event => sendMessage()" v-bind:disabled="isGeneratingReply">
             </button>
         </div>
     </div>

@@ -56,4 +56,9 @@ export default defineComponent({
 .box {
     height: 100%;
 }
+
+.box:hover {
+    background-color: var(--secondary);
+    color: var(--text);
+}
 </style>

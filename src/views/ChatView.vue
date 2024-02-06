@@ -270,9 +270,6 @@ export default defineComponent({
 
 .message-container {
     overflow-y: scroll;
-    scrollbar-width: thin;
-    scrollbar-color: #888 #f5f5f5;
-    overflow-y: scroll;
     padding: 4px;
 }
 

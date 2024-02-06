@@ -9,12 +9,12 @@ import { connectFirestoreEmulator } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDXuP3Hy0JBMFfRkn477U2Gy_mb9WmKifU",
-    authDomain: "chatapp-24285.firebaseapp.com",
-    projectId: "chatapp-24285",
-    storageBucket: "chatapp-24285.appspot.com",
-    messagingSenderId: "1044541888156",
-    appId: "1:1044541888156:web:b0f701d23602ea8e803f59"
+    apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+    authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.VUE_APP_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);

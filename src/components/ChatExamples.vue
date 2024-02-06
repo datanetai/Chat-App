@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-between flex-col md:flex-row">
-        <div class="flex flex-col m-1" v-for="question in questions" :key="question.id">
-            <div class="p-5 bg-primary text-text2 cursor-pointer" @click="handleQuestion(question.id)">
+        <div class="flex flex-col m-1 box-container" v-for="question in questions" :key="question.id">
+            <div class="p-5 bg-primary text-text2 cursor-pointer box" @click="handleQuestion(question.id)">
                 <h3 class="mt-0">{{ question.title }}</h3>
                 <p class="mb-0">{{ question.description }}</p>
             </div>
@@ -18,23 +18,23 @@ export default defineComponent({
             questions: [
                 {
                     id: 1,
-                    title: "Question 1",
-                    description: "Ask a question about software development.",
+                    title: "Software Development",
+                    description: "What is Agile development?",
                 },
                 {
                     id: 2,
-                    title: "Question 2",
-                    description: "Ask a question about programming languages.",
+                    title: "Programming Languages",
+                    description: "What is the difference between a statically typed language and a dynamically typed language?",
                 },
                 {
                     id: 3,
-                    title: "Question 3",
-                    description: "Ask a question about web development.",
+                    title: "Web Development",
+                    description: "How do you improve a website's load time?",
                 },
                 {
                     id: 4,
-                    title: "Question 4",
-                    description: "Ask a question about artificial intelligence.",
+                    title: "Artificial Intelligence",
+                    description: "What is deep learning?",
                 },
             ],
         };
@@ -46,3 +46,14 @@ export default defineComponent({
     },
 });
 </script>
+
+<style scoped>
+.box-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.box {
+    height: 100%;
+}
+</style>

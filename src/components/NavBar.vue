@@ -5,8 +5,11 @@
             <p>Chat App</p>
         </div>
         <div class="theme-toggle">
-            <button @click="toggleTheme">Toggle Theme</button>
-            <button v-if="$route.name === 'home'" @click="$emit('toggleChatHistory')">Toggle Chat History</button>
+            <button @click="toggleTheme">
+                <i :class="theme === 'light' ? 'fas fa-moon' : 'fas fa-sun'"></i> </button>
+            <button v-if="$route.name === 'home'" @click="$emit('toggleChatHistory')">
+                <i class="fas fa-history"></i>
+            </button>
         </div>
     </nav>
 </template>
@@ -14,6 +17,12 @@
 <script lang="ts">
 import { useThemeStore } from '@/store/themeStore';
 export default {
+    computed: {
+        theme() {
+            const themeStore = useThemeStore();
+            return themeStore.theme;
+        },
+    },
     methods: {
         toggleTheme() {
             const themeStore = useThemeStore();
@@ -57,5 +66,17 @@ button {
     display: block;
     width: 50px;
     margin-right: 0.4rem;
+}
+
+.fa-sun:before {
+    content: "\f185";
+}
+
+.fa-moon:before {
+    content: "\f186";
+}
+
+.fa-history:before {
+    content: "\f1da";
 }
 </style>

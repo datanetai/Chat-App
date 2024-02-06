@@ -6,7 +6,7 @@
         </div>
         <div class="theme-toggle">
             <button @click="toggleTheme">Toggle Theme</button>
-            <button @click="$emit('toggleChatHistory')">Toggle Chat History</button>
+            <button v-if="$route.name === 'home'" @click="$emit('toggleChatHistory')">Toggle Chat History</button>
         </div>
     </nav>
 </template>
@@ -32,6 +32,7 @@ nav {
     flex-direction: row;
     box-shadow: 0 1px 2px var(--text);
     height: 10%;
+    z-index: 10000;
 }
 
 .logo_div {

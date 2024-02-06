@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
-    <ChatHistory v-if="showChatHistory" class="chat-history" />
+    <transition name="fade">
+      <ChatHistory v-if="showChatHistory" class="chat-history" />
+    </transition>
     <div class="main-content">
       <NavBar @toggleChatHistory="toggleChatHistory" />
       <router-view />
@@ -13,7 +15,6 @@ import { useThemeStore } from '@/store/themeStore';
 import NavBar from '@/components/NavBar.vue';
 import ChatHistory from '@/components/ChatHistory.vue';
 import { onMounted, watch, computed, ref } from 'vue';
-
 export default {
   name: 'App',
   components: {
@@ -26,7 +27,6 @@ export default {
     const showChatHistory = ref(false);
 
     onMounted(() => {
-      // select html element
       document.documentElement.dataset.theme = currentTheme.value;
     });
 
@@ -59,5 +59,15 @@ export default {
 
 .main-content {
   flex: 3;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

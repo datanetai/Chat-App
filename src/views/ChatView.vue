@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <ChatExamples class="examples" v-if="messages.length === 0" @questionClicked="exampleClickedHandler" />
-        <div class="message-container" ref="messagesContainer">
+        <div class="message-container" ref="messagesContainer" :style="{ height: messageContainerHeight }">
             <div class="messages">
                 <ChatMessageComponent v-for="message in messages" :key="message.id" :message="message"
                     @update-message="editMessage" />
@@ -201,10 +201,13 @@ export default defineComponent({
         // Call the loadMessages function when the component is created
         loadMessages();
         let isGeneratingReply = ref<boolean>(false);
-
+        const messageContainerHeight = () => {
+            return messages.value.length > 0 ? '70%' : '30vh';
+        }
         /**
-         * Return reactive data and functions to be used in the template
-         */
+ * Return reactive data and functions to be used in the template
+ */
+
         return {
             currentTheme,
             svgFilter,
@@ -215,6 +218,7 @@ export default defineComponent({
             exampleClickedHandler,
             sendMessage,
             isGeneratingReply,
+            messageContainerHeight
         };
     },
     computed: {
@@ -230,7 +234,9 @@ export default defineComponent({
         inputTextColor(): string {
             return this.currentTheme === 'dark' ? '#f5f5f5' : '#1f1f1f';
         },
+
     },
+
 });
 
 </script>
@@ -267,7 +273,6 @@ export default defineComponent({
     scrollbar-width: thin;
     scrollbar-color: #888 #f5f5f5;
     overflow-y: scroll;
-    height: 79vh;
     padding: 4px;
 }
 
@@ -309,6 +314,7 @@ export default defineComponent({
 
 .examples {
     margin: 30px;
+    height: 30vh;
 }
 
 .clear-button {

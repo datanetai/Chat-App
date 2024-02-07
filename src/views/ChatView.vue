@@ -202,8 +202,9 @@ export default defineComponent({
         loadMessages();
         let isGeneratingReply = ref<boolean>(false);
         const messageContainerHeight = () => {
-            return messages.value.length > 0 ? '70vh' : '30vh';
+            return messages.value.length > 0 ? '70vh' : '10vh';
         }
+
         /**
  * Return reactive data and functions to be used in the template
  */
@@ -313,6 +314,13 @@ export default defineComponent({
     margin: 30px;
     height: 30vh;
 }
+
+@media screen and (max-width: 900px) {
+    .examples {
+        height: 50vh;
+    }
+}
+
 
 .clear-button {
     display: flex;

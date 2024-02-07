@@ -74,10 +74,11 @@ export default defineComponent({
 
 .box {
     height: 100%;
+    background-color: var(--secondary);
+    color: var(--text);
 }
 
 .box:hover {
-    background-color: var(--secondary);
-    color: var(--text);
+    background-color: var(--ascent);
 }
 </style>

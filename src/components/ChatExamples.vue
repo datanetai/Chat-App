@@ -79,6 +79,6 @@ export default defineComponent({
 }
 
 .box:hover {
-    background-color: var(--ascent);
+    filter: brightness(80%);
 }
 </style>

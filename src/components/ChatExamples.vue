@@ -10,7 +10,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, watch } from 'vue';
+import { useHistoryStore } from '@/store/historyVisibility';
 
 export default defineComponent({
     data() {
@@ -43,6 +44,24 @@ export default defineComponent({
         handleQuestion(questionId: number) {
             this.$emit('questionClicked', this.questions.find(q => q.id === questionId)?.description);
         },
+    },
+    setup() {
+        const historyStore = useHistoryStore();
+        onMounted(() => {
+            watch(() => historyStore.getShowChatHistory, (newHistory) => {
+                // decrease text size if chat history is visible
+                if (newHistory) {
+                    document.querySelectorAll('.box').forEach((el) => {
+                        el.classList.add('text-sm');
+                    });
+                } else {
+                    document.querySelectorAll('.box').forEach((el) => {
+                        el.classList.remove('text-sm');
+                    });
+                }
+
+            });
+        });
     },
 });
 </script>

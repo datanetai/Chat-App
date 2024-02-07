@@ -15,6 +15,7 @@ import { useThemeStore } from '@/store/themeStore';
 import NavBar from '@/components/NavBar.vue';
 import ChatHistory from '@/components/ChatHistory.vue';
 import { onMounted, watch, computed, ref } from 'vue';
+import { useHistoryStore } from '@/store/historyVisibility';
 export default {
   name: 'App',
   components: {
@@ -23,6 +24,8 @@ export default {
   },
   setup() {
     const themeStore = useThemeStore();
+    const historyStore = useHistoryStore();
+
     const currentTheme = computed(() => themeStore.getTheme);
     const showChatHistory = ref(false);
 
@@ -37,8 +40,8 @@ export default {
 
     const toggleChatHistory = () => {
       showChatHistory.value = !showChatHistory.value;
+      historyStore.setShowChatHistory(showChatHistory.value);
     };
-
     return {
       currentTheme,
       showChatHistory,

@@ -39,11 +39,12 @@ export default defineComponent({
         ChatMessageComponent,
     },
     setup() {
+
         /**
          * Reactive state and computed properties
          */
         const themeStore = useThemeStore();
-
+        
         const currentTheme = computed(() => themeStore.getTheme);
 
         const svgFilter = computed(() => {

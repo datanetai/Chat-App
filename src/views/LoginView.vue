@@ -5,8 +5,8 @@
             <h1 class="text-center text-2xl font-bold">Login</h1>
             <form @submit.prevent="login">
                 <div class="form-group">
-                    <label class="form-label" for="username">Username</label>
-                    <input type="text" id="username" v-model="username" required>
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" v-model="email" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
@@ -24,14 +24,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import axios from 'axios';
-import router from '../router'; // make sure to import your router
+import router from '../router';
 import firebase from '@/firebase';
 
 export default defineComponent({
     data() {
         return {
-            username: '',
+            email: '',
             password: '',
             errorMessage: ''
         };
@@ -39,7 +38,7 @@ export default defineComponent({
     methods: {
         async login() {
             try {
-                const userCredential = await firebase.signInWithEmailAndPassword(firebase.auth, this.username, this.password);
+                const userCredential = await firebase.signInWithEmailAndPassword(firebase.auth, this.email, this.password);
                 const user = userCredential.user;
                 console.log("user", user)
                 if (user) {
@@ -87,7 +86,7 @@ label {
     color: var(--text);
 }
 
-input[type="text"],
+input[type="email"],
 input[type="password"],
 button {
     width: 100%;

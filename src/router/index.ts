@@ -1,13 +1,16 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import ChatView from '../views/ChatView.vue'
+import firebase from '@/firebase'; // import firebase
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: ChatView
+    component: ChatView,
+    meta: { requiresAuth: true }
+
   },
   {
     path: '/register',
@@ -33,5 +36,14 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const currentUser = firebase.auth.currentUser;
 
+  if (requiresAuth && !currentUser) {
+    next('/login');
+  } else {
+    next();
+  }
+});
 export default router

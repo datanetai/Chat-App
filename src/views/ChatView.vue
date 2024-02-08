@@ -326,11 +326,12 @@ export default defineComponent({
     height: 30vh;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 990px) {
     .examples {
         height: 50vh;
     }
 }
+
 
 
 .clear-button {

@@ -14,7 +14,8 @@
 import { useThemeStore } from '@/store/themeStore';
 import NavBar from '@/components/NavBar.vue';
 import ChatHistory from '@/components/ChatHistory.vue';
-import { onMounted, watch, computed, ref } from 'vue';
+import { onMounted, watch, computed, ref, reactive, provide } from 'vue';
+
 import { useHistoryStore } from '@/store/historyVisibility';
 export default {
   name: 'App',
@@ -28,7 +29,11 @@ export default {
 
     const currentTheme = computed(() => themeStore.getTheme);
     const showChatHistory = ref(false);
+    const state = reactive({
+      sessionId: null
+    });
 
+    provide('state', state);
     onMounted(() => {
       document.documentElement.dataset.theme = currentTheme.value;
     });

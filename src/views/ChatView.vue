@@ -21,7 +21,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ref, watch, nextTick } from 'vue';
+import { defineComponent, computed, ref, watch, nextTick, inject } from 'vue';
 import ChatExamples from '@/components/ChatExamples.vue';
 import ChatMessageComponent from '@/components/ChatMessageComponent.vue';
 import { useThemeStore } from '@/store/themeStore';
@@ -43,22 +43,6 @@ export default defineComponent({
         /**
          * Reactive state and computed properties
          */
-        const themeStore = useThemeStore();
-        
-        const currentTheme = computed(() => themeStore.getTheme);
-
-        const svgFilter = computed(() => {
-            return currentTheme.value === 'dark' ? 'invert(100%)' : 'none';
-        });
-
-        const messages = ref<ChatMessage[]>([
-
-        ]);
-
-        const newMessage = ref<string>('');
-
-
-        const sessionId = ref<string>(uuidv4()); // Generate a new UUID when the component is created
 
         /**
          * Load messages from Firestore based on the session ID
@@ -73,6 +57,32 @@ export default defineComponent({
                 });
             });
         };
+        const state = inject('state');
+        let sessionId = ref<string>(uuidv4()); // Generate a new UUID when the component is created
+
+        watch(() => (state as any).sessionId, (newSessionId, oldSessionId) => {
+            if (newSessionId !== oldSessionId && newSessionId) {
+                console.log('Session ID changed:', newSessionId);
+                sessionId.value = newSessionId;
+                loadMessages();
+            }
+        }, { immediate: true });
+        const themeStore = useThemeStore();
+
+        const currentTheme = computed(() => themeStore.getTheme);
+
+        const svgFilter = computed(() => {
+            return currentTheme.value === 'dark' ? 'invert(100%)' : 'none';
+        });
+
+        const messages = ref<ChatMessage[]>([
+
+        ]);
+
+        const newMessage = ref<string>('');
+
+
+
 
 
         /**
@@ -203,7 +213,7 @@ export default defineComponent({
         loadMessages();
         let isGeneratingReply = ref<boolean>(false);
         const messageContainerHeight = () => {
-            return messages.value.length > 0 ? '70vh' : '10vh';
+            return messages.value.length > 0 ? '80vh' : '10vh';
         }
 
         /**
@@ -346,4 +356,4 @@ export default defineComponent({
     flex-direction: column;
     align-items: flex-end;
 }
-</style>
+</style>`

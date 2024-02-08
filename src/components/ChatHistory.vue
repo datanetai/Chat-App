@@ -2,7 +2,8 @@
     <div>
         <h2 class="font-bold p-2 line-below" :class="lineBelowClass">Chat History</h2>
         <ul>
-            <li v-for="message in messages" :key="message.id" class="p-2 line-below-message" :class="hoverClass">
+            <li v-for="message in messages" :key="message.id" class="p-2 line-below-message" :class="hoverClass"
+                @click="onHistoryClick(message.sessionId)">
                 <div class="flex justify-between">
                     <h3 class="font-semibold">{{ message.message }}</h3>
                     <p class="text-gray-500">{{ message.timestamp }}</p>
@@ -15,12 +16,23 @@
 <script>
 import { getFirstMessageForEachSession } from '@/firestoreService';
 import { useThemeStore } from '@/store/themeStore';
+import { inject } from 'vue';
 
 export default {
     data() {
         return {
             messages: [],
             hoverClass: '',
+        };
+    },
+    setup() {
+        const state = inject('state');
+        const onHistoryClick = (sessionId) => {
+            console.log('sessionId', sessionId);
+            state.sessionId = sessionId;
+        };
+        return {
+            onHistoryClick,
         };
     },
     computed: {

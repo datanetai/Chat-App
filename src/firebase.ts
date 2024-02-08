@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 
 import { getAuth, connectAuthEmulator, signInWithEmailAndPassword } from "firebase/auth";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { connectFirestoreEmulator } from "firebase/firestore";
 
 
@@ -27,4 +27,13 @@ if (process.env.NODE_ENV === 'development') {
     connectFirestoreEmulator(db, 'localhost', 8080);
 
 }
-export { app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, db };
+const firebase = {
+    app,
+    auth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    db,
+    updateProfile
+};
+
+export default firebase;

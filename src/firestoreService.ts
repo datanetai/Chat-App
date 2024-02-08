@@ -1,8 +1,8 @@
 // firestoreService.ts
-import { db } from "./firebase"; 
+import firebase from "./firebase";
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
-const messagesCollection = collection(db, "messages");
+const messagesCollection = collection(firebase.db, "messages");
 
 /**
  * Function to add a message

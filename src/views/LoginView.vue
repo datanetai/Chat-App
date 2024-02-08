@@ -26,7 +26,7 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import router from '../router'; // make sure to import your router
-import { auth, signInWithEmailAndPassword } from '@/firebase';
+import firebase from '@/firebase';
 
 export default defineComponent({
     data() {
@@ -39,7 +39,7 @@ export default defineComponent({
     methods: {
         async login() {
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, this.username, this.password);
+                const userCredential = await firebase.signInWithEmailAndPassword(firebase.auth, this.username, this.password);
                 const user = userCredential.user;
                 console.log("user", user)
                 if (user) {

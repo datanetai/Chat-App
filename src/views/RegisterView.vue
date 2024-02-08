@@ -34,7 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import { auth, createUserWithEmailAndPassword } from '@/firebase';
+import firebase from '@/firebase';
 
 export default defineComponent({
     data() {
@@ -55,11 +55,12 @@ export default defineComponent({
                     return;
                 }
 
-                const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+                const userCredential = await firebase.createUserWithEmailAndPassword(firebase.auth, this.email, this.password);
                 const user = userCredential.user;
-                console.log("user", user)
 
                 if (user) {
+                    // Update the user's profile with the username
+                    await firebase.updateProfile(user, { displayName: this.username });
                     this.$router.push('/login');
                 } else {
                     this.errorMessage = 'Registration failed.';

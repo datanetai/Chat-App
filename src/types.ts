@@ -4,3 +4,8 @@ export interface ChatMessage {
     text: string;
     type: 'sent' | 'received';
 }
+
+export interface MessagesHistory {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}

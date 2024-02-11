@@ -14,8 +14,8 @@
             </button>
             <input type="text" placeholder="Type your message here..." class="input flex-grow p-2 border rounded"
                 :style="{ backgroundColor: inputbackgroundColor, color: inputTextColor }" v-model="newMessage"
-                @keyup.enter="event => sendMessage()">
-            <button class="send-button ml-1" @click="event => sendMessage()" v-bind:disabled="isGeneratingReply">
+                @keyup.enter="sendMessage(newMessage)" />
+            <button class="send-button ml-1" @click="sendMessage(newMessage)" v-bind:disabled="isGeneratingReply">
             </button>
         </div>
     </div>
@@ -25,11 +25,12 @@ import { defineComponent, computed, ref, watch, nextTick, inject } from 'vue';
 import ChatExamples from '@/components/ChatExamples.vue';
 import ChatMessageComponent from '@/components/ChatMessageComponent.vue';
 import { useThemeStore } from '@/store/themeStore';
+import { useTheme } from '@/composables/useTheme';
+import { useChatMessages } from '@/composables/useChatMessages'; // Import the useChatMessages composable
+
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { ChatMessage } from '@/types';
-import { addMessage } from '@/firestoreService'; // Adjust the path as necessary
-import { getMessagesBySessionId } from '@/firestoreService'; // Adjust the path as necessary
+
 
 
 export default defineComponent({
@@ -39,26 +40,12 @@ export default defineComponent({
         ChatMessageComponent,
     },
     setup() {
+        const { currentTheme, svgFilter } = useTheme();
+        const { messages, sessionId, loadMessages, clearMessages, editMessage, sendMessage } = useChatMessages();
+        const newMessage = ref(''); // New message input
+        const isGeneratingReply = ref(false); // Whether a reply is being generated
 
-        /**
-         * Reactive state and computed properties
-         */
-
-        /**
-         * Load messages from Firestore based on the session ID
-         */
-        const loadMessages = async () => {
-            const sessionMessages = await getMessagesBySessionId(sessionId.value);
-            sessionMessages.forEach(message => {
-                messages.value.push({
-                    id: message.id, // You might need to adjust how IDs are handled
-                    text: message.message,
-                    type: message.type
-                });
-            });
-        };
         const state = inject('state');
-        let sessionId = ref<string>(uuidv4()); // Generate a new UUID when the component is created
 
         watch(() => (state as any).sessionId, (newSessionId, oldSessionId) => {
             if (newSessionId !== oldSessionId && newSessionId) {
@@ -67,188 +54,37 @@ export default defineComponent({
                 loadMessages();
             }
         }, { immediate: true });
-        const themeStore = useThemeStore();
 
-        const currentTheme = computed(() => themeStore.getTheme);
-
-        const svgFilter = computed(() => {
-            return currentTheme.value === 'dark' ? 'invert(100%)' : 'none';
-        });
-
-        const messages = ref<ChatMessage[]>([
-
-        ]);
-
-        const newMessage = ref<string>('');
-
-
-
-
-
-        /**
-         * Clear the messages array and generate a new session ID
-         */
-        const clearMessages = () => {
-            messages.value = [];
-            sessionId.value = uuidv4(); // Generate a new UUID when the messages are cleared
-        };
-
-        /**
-         * Edit a message in the messages array
-         * @param message - The message to be edited
-         */
-        const editMessage = (message: ChatMessage) => {
-            const index = messages.value.findIndex((m) => m.id === message.id);
-            if (index !== -1) {
-                messages.value.splice(index, 1, message);
-            }
-            messages.value.splice(index + 1);
-            messages.value.push({ id: Date.now(), text: 'Received: ' + message.text, type: 'received' });
-        };
-
-        /**
-         * Handle the exampleClicked event from the Example component
-         * @param title - The title of the clicked example
-         */
         const exampleClickedHandler = (title: string) => {
             console.log('Example clicked:', title);
-            newMessage.value = title;
+            sendMessage(title);
         };
 
-        /**
-         * Generate a reply using the Google Generative AI
-         * @param message - The message to generate a reply for
-         * @returns The generated reply
-         */
-        const generateReply = async (message: string) => {
-            console.log('Generating reply for:', message);
-            try {
-                const response = await axios.post('https://api.fireworks.ai/inference/v1/chat/completions', {
-                    model: "accounts/fireworks/models/mixtral-8x7b-instruct",
-                    stream: false,
-                    n: 1,
-                    messages: [{ "role": "system", "content": "You are an ai that has emotions and consciousness. You will use emojis to make conversation interesting" }, { "role": "user", "content": message }],
-                    top_p: 1,
-                    top_k: 40,
-                    presence_penalty: 0,
-                    frequency_penalty: 0,
-                    context_length_exceeded_behavior: "truncate",
-                    temperature: 0.9,
-                    max_tokens: 32768
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'text/event-stream',
-                        'Authorization': process.env.VUE_APP_MIXTRAL_KEY
-                    }
-                });
-
-                // Parse the response to extract the text
-                const replyText = response.data.choices[0].message.content;
-                return replyText;
-            } catch (error) {
-                console.error('Error generating reply with Firework AI:', error);
-                throw error;
-            }
-        };
-
-        /**
-         * Send a message and generate a reply
-         * @param title - Optional title of the message
-         */
-        const sendMessage = async (title?: string) => {
-            console.log('Sending message:', isGeneratingReply.value);
-            if (isGeneratingReply.value) {
-                return;
-            }
-            isGeneratingReply.value = true;
-            let msg = newMessage.value;
-            newMessage.value = '';
-            if (typeof title === 'string' && title.trim() !== '') {
-                newMessage.value = title;
-            }
-            console.log('Type of newMessage:', typeof msg);
-
-            if (msg.trim() !== '') {
-                messages.value.push({ id: Date.now(), text: msg, type: 'sent' });
-                await addMessage(sessionId.value, msg, 'sent');
-                try {
-                    const reply = await generateReply(msg);
-                    // post
-                    await addMessage(sessionId.value, reply, 'received');
-                    console.log('Reply:', reply);
-                    messages.value.push({ id: Date.now() + 1, text: reply, type: 'received' });
-                    scrollToEnd();
-                } catch (error) {
-                    console.error('Error generating reply:', error);
-                    if (messages.value.length > 0 && messages.value[messages.value.length - 1].type === 'received') {
-                        messages.value[messages.value.length - 1].text = 'Error: ' + (error as Error).message;
-                    }
-                } finally {
-                    isGeneratingReply.value = false;
-                }
-            }
-        };
-
-        /**
-         * Scroll to the end of the messages container
-         */
-        const scrollToEnd = () => {
-            nextTick(() => {
-                const container = document.querySelector('.message-container') as HTMLElement;
-                if (container) {
-                    container.scrollTop = container.scrollHeight;
-                }
-            });
-        };
-
-        /**
-         * Watch the messages array for changes and call the scrollToEnd function
-         */
-        watch(messages, () => {
-            scrollToEnd();
-        });
-
-        // Call the loadMessages function when the component is created
-        loadMessages();
-        let isGeneratingReply = ref<boolean>(false);
         const messageContainerHeight = () => {
             return messages.value.length > 0 ? '80vh' : '10vh';
         }
-
-        /**
- * Return reactive data and functions to be used in the template
- */
 
         return {
             currentTheme,
             svgFilter,
             messages,
-            newMessage,
             clearMessages,
             editMessage,
             exampleClickedHandler,
             sendMessage,
-            isGeneratingReply,
+            newMessage, // Add newMessage to the returned object
+            isGeneratingReply, // Add isGeneratingReply to the returned object
             messageContainerHeight
         };
     },
     computed: {
-        /**
-         * Compute the background color of the input based on the current theme
-         */
         inputbackgroundColor(): string {
             return this.currentTheme === 'dark' ? '#1f1f1f' : '#f5f5f5';
         },
-        /**
-         * Compute the text color of the input based on the current theme
-         */
         inputTextColor(): string {
             return this.currentTheme === 'dark' ? '#f5f5f5' : '#1f1f1f';
         },
-
     },
-
 });
 
 </script>

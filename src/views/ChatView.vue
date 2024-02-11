@@ -26,11 +26,7 @@ import ChatExamples from '@/components/ChatExamples.vue';
 import ChatMessageComponent from '@/components/ChatMessageComponent.vue';
 import { useThemeStore } from '@/store/themeStore';
 import { useTheme } from '@/composables/useTheme';
-import { useChatMessages } from '@/composables/useChatMessages'; // Import the useChatMessages composable
-
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-
+import { useChatMessages } from '@/composables/useChatMessages';
 
 
 export default defineComponent({

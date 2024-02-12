@@ -1,6 +1,7 @@
 <template>
     <div class="home">
-        <ChatExamples class="examples" v-if="messages.length === 0" @questionClicked="exampleClickedHandler" />
+        <ChatExamples class="examples" v-if="messages.length === 0 && !isloading"
+            @questionClicked="exampleClickedHandler" />
         <div class="message-container" ref="messagesContainer" :style="{ height: messageContainerHeight() }">
             <div class="messages">
                 <ChatMessageComponent v-for="message in messages" :key="message.id" :message="message"
@@ -21,7 +22,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ref, watch, nextTick, inject } from 'vue';
+import { defineComponent, ref, watch, inject } from 'vue';
 import ChatExamples from '@/components/ChatExamples.vue';
 import ChatMessageComponent from '@/components/ChatMessageComponent.vue';
 import { useTheme } from '@/composables/useTheme';
@@ -39,16 +40,23 @@ export default defineComponent({
         const { messages, sessionId, loadMessages, clearMessages, editMessage, sendMessage } = useChatMessages();
         const newMessage = ref(''); // New message input
         const isGeneratingReply = ref(false); // Whether a reply is being generated
+        const isloading = ref(false);
         const state = inject('state');
 
-        watch(() => (state as any).sessionId, (newSessionId, oldSessionId) => {
-            if (newSessionId !== oldSessionId && newSessionId) {
-                console.log('Session ID changed:', newSessionId);
-                messages.value.length = 0;
-                sessionId.value = newSessionId;
-                loadMessages();
-            }
-        }, { immediate: true });
+        watch(
+            () => (state as any).sessionId,
+            async (newSessionId, oldSessionId) => {
+                if (newSessionId !== oldSessionId && newSessionId) {
+                    console.log('Session ID changed:', newSessionId);
+                    messages.value.length = 0;
+                    isloading.value = true;
+                    sessionId.value = newSessionId;
+                    await loadMessages();
+                    isloading.value = false;
+                }
+            },
+            { immediate: true }
+        );
 
         const exampleClickedHandler = (title: string) => {
             console.log('Example clicked:', title);
@@ -69,7 +77,8 @@ export default defineComponent({
             sendMessage,
             newMessage, // Add newMessage to the returned object
             isGeneratingReply, // Add isGeneratingReply to the returned object
-            messageContainerHeight
+            messageContainerHeight,
+            isloading
         };
     },
     computed: {

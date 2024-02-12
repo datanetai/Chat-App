@@ -80,7 +80,7 @@ export function useChatMessages() {
             return;
         }
         isGeneratingReply.value = true;
-
+        
         if (message.trim() !== '') {
             messages.value.push({ id: Date.now(), text: message, type: 'sent' });
             await addMessage(sessionId.value, message, 'sent');

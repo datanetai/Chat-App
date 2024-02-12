@@ -38,6 +38,9 @@ dependencies:
   postcss:
     specifier: ^8.4.33
     version: 8.4.33
+  sweetalert2:
+    specifier: ^11.10.5
+    version: 11.10.5
   tailwindcss:
     specifier: ^3.4.1
     version: 3.4.1
@@ -10622,6 +10625,10 @@ packages:
       picocolors: 1.0.0
       stable: 0.1.8
     dev: true
+
+  /sweetalert2@11.10.5:
+    resolution: {integrity: sha512-q9eE3EKhMcpIDU/Xcz7z5lk8axCGkgxwK47gXGrrfncnBJWxHPPHnBVAjfsVXcTt8Yi8U6HNEcBRSu+qGeyFdA==}
+    dev: false
 
   /symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}

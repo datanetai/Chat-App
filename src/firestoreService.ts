@@ -51,8 +51,8 @@ async function getMessagesBySessionId(sessionId: string) {
     const querySnapshot = await getDocs(q);
     const messages = querySnapshot.docs.map(doc => doc.data());
 
-    // Sort the messages array based on the id
-    const sortedMessages = messages.sort((a, b) => a.id - b.id);
+    // Sort the messages array based on the timestamp
+    const sortedMessages = messages.sort((a, b) => a.timestamp - b.timestamp);
 
     return sortedMessages;
 }

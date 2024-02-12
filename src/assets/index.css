@@ -55,3 +55,8 @@ router-link:hover {
 router-link.active {
     text-decoration: underline;
 }
+
+.swal2-popup {
+    background-color: var(--background);
+    color: var(--text)
+}

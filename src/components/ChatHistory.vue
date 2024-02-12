@@ -6,8 +6,15 @@
                 @click="onHistoryClick(message.sessionId)">
                 <div class="flex justify-between">
                     <h3 class="font-semibold">{{ message.message }}</h3>
-                    <p class="text-gray-500">{{ message.timestamp }}</p>
+                    <div class="relative">
+                        <p class="timestamp text-gray-500">{{ message.timestamp }}</p>
+                        <button class="delete-button" @click.stop="deleteMessage(message.id)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
+
+
             </li>
         </ul>
     </div>
@@ -15,8 +22,9 @@
 
 <script>
 import { getFirstMessageForEachSession } from '@/firestoreService';
-import { useThemeStore } from '@/store/themeStore';
 import { inject } from 'vue';
+import Swal from 'sweetalert2'; // Import sweetalert2
+import { useTheme } from '@/composables/useTheme';
 
 export default {
     data() {
@@ -27,18 +35,21 @@ export default {
     },
     setup() {
         const state = inject('state');
+        const { currentTheme, svgFilter } = useTheme();
+
         const onHistoryClick = (sessionId) => {
             console.log('sessionId', sessionId);
             state.sessionId = sessionId;
         };
         return {
             onHistoryClick,
+            currentTheme
         };
     },
     computed: {
         lineBelowClass() {
-            const themeStore = useThemeStore();
-            return themeStore.isDarkTheme ? 'line-below-dark' : 'line-below-light';
+
+            return this.currentTheme ? 'line-below-dark' : 'line-below-light';
         },
     },
     mounted() {
@@ -52,13 +63,31 @@ export default {
                 const formattedTimestamp = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 return {
                     ...message,
-                    timestamp: formattedTimestamp // Update variable name to formattedTimestamp
+                    timestamp: formattedTimestamp
                 };
             });
             console.log(messages);
             this.messages = messages;
         },
-    },
+
+        async deleteMessage(id) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+
+            })
+
+            if (result.isConfirmed) {
+                // Delete logic goes here
+                console.log('Deleting message with id:', id);
+            }
+        }
+    }
 };
 </script>
 
@@ -69,7 +98,7 @@ export default {
 }
 
 .line-below-dark {
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid grey;
     padding-bottom: 10px;
 }
 
@@ -81,4 +110,28 @@ export default {
     background-color: var(--secondary);
     cursor: pointer;
 }
-</style>
+
+.timestamp {
+    transition: opacity 0.3s ease;
+}
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+}
+
+.line-below-message:hover .delete-button {
+    display: block;
+}
+
+.line-below-message:hover .timestamp {
+    opacity: 0;
+}
+
+.delete-button i {
+    color: red;
+    font-size: 1.2em;
+}
+</style>`

@@ -14,8 +14,8 @@
             </button>
             <input type="text" placeholder="Type your message here..." class="input flex-grow p-2 border rounded"
                 :style="{ backgroundColor: inputbackgroundColor, color: inputTextColor }" v-model="newMessage"
-                @keyup.enter="sendMessage(newMessage)" />
-            <button class="send-button ml-1" @click="sendMessage(newMessage)" v-bind:disabled="isGeneratingReply">
+                @keyup.enter="onSendMessage()" />
+            <button class="send-button ml-1" @click="onSendMessage()" v-bind:disabled="isGeneratingReply">
             </button>
         </div>
     </div>
@@ -24,7 +24,6 @@
 import { defineComponent, computed, ref, watch, nextTick, inject } from 'vue';
 import ChatExamples from '@/components/ChatExamples.vue';
 import ChatMessageComponent from '@/components/ChatMessageComponent.vue';
-import { useThemeStore } from '@/store/themeStore';
 import { useTheme } from '@/composables/useTheme';
 import { useChatMessages } from '@/composables/useChatMessages';
 
@@ -40,12 +39,12 @@ export default defineComponent({
         const { messages, sessionId, loadMessages, clearMessages, editMessage, sendMessage } = useChatMessages();
         const newMessage = ref(''); // New message input
         const isGeneratingReply = ref(false); // Whether a reply is being generated
-
         const state = inject('state');
 
         watch(() => (state as any).sessionId, (newSessionId, oldSessionId) => {
             if (newSessionId !== oldSessionId && newSessionId) {
                 console.log('Session ID changed:', newSessionId);
+                messages.value.length = 0;
                 sessionId.value = newSessionId;
                 loadMessages();
             }
@@ -81,6 +80,14 @@ export default defineComponent({
             return this.currentTheme === 'dark' ? '#f5f5f5' : '#1f1f1f';
         },
     },
+    methods: {
+        async onSendMessage() {
+            const message = this.newMessage;
+            this.newMessage = '';
+            await this.sendMessage(message);
+
+        }
+    }
 });
 
 </script>
@@ -189,4 +196,4 @@ export default defineComponent({
     flex-direction: column;
     align-items: flex-end;
 }
-</style>`
+</style>

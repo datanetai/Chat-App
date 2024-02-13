@@ -1,4 +1,4 @@
-`<template>
+<template>
     <div class="home">
         <ChatExamples class="examples" v-if="messages.length === 0 && !isloading"
             @questionClicked="exampleClickedHandler" />
@@ -6,6 +6,7 @@
             <div class="messages">
                 <ChatMessageComponent v-for="message in messages" :key="message.id" :message="message"
                     @update-message="editMessage" />
+                <div v-if="isGeneratingReply" class="loader"></div>
             </div>
         </div>
         <div class="input_box fixed bottom-0 left-0 right-0 flex items-center">
@@ -96,7 +97,10 @@ export default defineComponent({
             } else {
                 const message = this.newMessage;
                 this.newMessage = '';
+                if (this.isGeneratingReply) return;
+                this.isGeneratingReply = true;
                 await this.sendMessage(message);
+                this.isGeneratingReply = false;
             }
         }
     }
@@ -207,5 +211,24 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 10px;
+    height: 10px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>`

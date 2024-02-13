@@ -7,7 +7,6 @@ import { addMessage, getMessagesBySessionId } from '@/firestoreService';
 export function useChatMessages() {
     const messages = ref<ChatMessage[]>([]);
     const sessionId = ref<string>(uuidv4());
-    const isGeneratingReply = ref<boolean>(false);
     let messageHistory: MessagesHistory[] = [
         {
             role: 'system',
@@ -76,11 +75,8 @@ export function useChatMessages() {
     };
 
     const sendMessage = async (message: string) => {
-        if (isGeneratingReply.value) {
-            return;
-        }
-        isGeneratingReply.value = true;
-        
+
+
         if (message.trim() !== '') {
             messages.value.push({ id: Date.now(), text: message, type: 'sent' });
             await addMessage(sessionId.value, message, 'sent');
@@ -97,8 +93,6 @@ export function useChatMessages() {
                 if (messages.value.length > 0 && messages.value[messages.value.length - 1].type === 'received') {
                     messages.value[messages.value.length - 1].text = 'Error: ' + (error as Error).message;
                 }
-            } finally {
-                isGeneratingReply.value = false;
             }
         }
     };

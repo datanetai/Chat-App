@@ -5,10 +5,10 @@
             <li v-for="message in messages" :key="message.id" class="p-2 line-below-message" :class="hoverClass"
                 @click="onHistoryClick(message.sessionId)">
                 <div class="flex justify-between">
-                    <h3 class="font-semibold">{{ message.message }}</h3>
+                    <h3 class="font-semibold">{{ shortMessage(message.message) }}</h3>
                     <div class="relative">
                         <p class="timestamp text-gray-500">{{ message.timestamp }}</p>
-                        <button class="delete-button" @click.stop="deleteMessage(message.id)">
+                        <button class="delete-button" @click.stop="deleteMessage(message.sessionId)">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -25,6 +25,7 @@ import { getFirstMessageForEachSession } from '@/firestoreService';
 import { inject } from 'vue';
 import Swal from 'sweetalert2'; // Import sweetalert2
 import { useTheme } from '@/composables/useTheme';
+import { deleteSession } from '@/firestoreService';
 
 export default {
     data() {
@@ -83,9 +84,18 @@ export default {
             })
 
             if (result.isConfirmed) {
-                // Delete logic goes here
-                console.log('Deleting message with id:', id);
+                await deleteSession(id);
+                await this.fetchMessages();
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+
             }
+        },
+        shortMessage(message) {
+            return message.length > 20 ? message.substring(0, 20) + '...' : message;
         }
     }
 };
@@ -133,5 +143,9 @@ export default {
 .delete-button i {
     color: red;
     font-size: 1.2em;
+}
+
+ul {
+    overflow-y: auto;
 }
 </style>`

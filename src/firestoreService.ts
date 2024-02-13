@@ -1,6 +1,6 @@
 // firestoreService.ts
 import firebase from "./firebase";
-import { increment, serverTimestamp, doc, setDoc, collection, addDoc, query, where, getDocs, getDoc } from "firebase/firestore";
+import { increment, serverTimestamp, doc, setDoc, collection, addDoc, query, where, getDocs, getDoc, deleteDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const messagesCollection = collection(firebase.db, "messages");
@@ -84,4 +84,16 @@ async function getFirstMessageForEachSession() {
     return firstMessages;
 }
 
-export { addMessage, getMessagesBySessionId, getFirstMessageForEachSession };
+async function deleteSession(sessionId: string) {
+    const auth = getAuth();
+    const userId = auth.currentUser?.uid; // Get the user ID from the auth context
+
+    const q = query(messagesCollection, where("sessionId", "==", sessionId), where("userId", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref);
+    });
+}
+
+export { addMessage, getMessagesBySessionId, getFirstMessageForEachSession, deleteSession };

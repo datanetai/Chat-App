@@ -1,13 +1,15 @@
 <template>
     <div :class="messageClass">
-        <p>{{ message.text }}</p>
+        <div v-html="markdownMessage"></div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { ChatMessage } from '@/types';
-
+import MarkdownIt from 'markdown-it';
+import 'highlight.js/styles/default.css'; // or another theme
+import hljs from 'highlight.js';
 
 export default defineComponent({
     props: {
@@ -20,7 +22,29 @@ export default defineComponent({
         messageClass(): string {
             return this.message.type === 'sent' ? 'sent-message' : 'received-message';
         },
+        markdownMessage(): string {
+            const md = new MarkdownIt({
+                highlight: function (str: string, lang: string) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return `<div class="code-block">
+                                        <pre><code>${hljs.highlight(str, { language: lang }).value}</code></pre>
+                                    </div>`;
+                        } catch (error) {
+                            console.error('Failed to highlight code block:', error);
+                        }
+                    }
+                    return ''; // use external default escaping
+                }
+            });
+            return md.render(this.message.text);
+        },
     },
+    methods: {
+        copyCode(code: string) {
+            navigator.clipboard.writeText(code);
+        }
+    }
 });
 </script>
 
@@ -44,7 +68,20 @@ export default defineComponent({
     background-color: var(--secondary);
     color: var(--text);
     align-self: flex-start;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
     /* Changed from flex-start */
+}
+
+.code-block {
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 /* .sent-message::after {

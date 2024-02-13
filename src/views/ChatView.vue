@@ -1,4 +1,4 @@
-<template>
+`<template>
     <div class="home">
         <ChatExamples class="examples" v-if="messages.length === 0 && !isloading"
             @questionClicked="exampleClickedHandler" />
@@ -13,9 +13,9 @@
                 <img class="icon_clear" :style="{ filter: svgFilter }" width="20" src="@/assets/clear.svg"
                     alt="Clear messages" />
             </button>
-            <input type="text" placeholder="Type your message here..." class="input flex-grow p-2 border rounded"
+            <textarea placeholder="Type your message here..." class="input flex-grow p-2 border rounded"
                 :style="{ backgroundColor: inputbackgroundColor, color: inputTextColor }" v-model="newMessage"
-                @keyup.enter="onSendMessage()" />
+                @keyup.enter="onSendMessage($event)" v-auto-height />
             <button class="send-button ml-1" @click="onSendMessage()" v-bind:disabled="isGeneratingReply">
             </button>
         </div>
@@ -90,11 +90,14 @@ export default defineComponent({
         },
     },
     methods: {
-        async onSendMessage() {
-            const message = this.newMessage;
-            this.newMessage = '';
-            await this.sendMessage(message);
-
+        async onSendMessage(event: KeyboardEvent) {
+            if (event.shiftKey) {
+                this.newMessage += '\n';
+            } else {
+                const message = this.newMessage;
+                this.newMessage = '';
+                await this.sendMessage(message);
+            }
         }
     }
 });
@@ -205,4 +208,4 @@ export default defineComponent({
     flex-direction: column;
     align-items: flex-end;
 }
-</style>
+</style>`

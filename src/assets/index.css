@@ -60,3 +60,22 @@ router-link.active {
     background-color: var(--background);
     color: var(--text)
 }
+
+code,
+pre,
+kdb,
+samp {
+    background-color: black;
+    color: white;
+    position: relative;
+    z-index: 1;
+    word-wrap: break-word;
+}
+
+pre {
+    padding: 1rem;
+}
+
+code {
+    position: relative;
+}

@@ -10,7 +10,7 @@
             <button v-if="$route.name === 'home'" @click="$emit('toggleChatHistory')">
                 <i class="fas fa-history"></i>
             </button>
-            <button @click="logout">
+            <button v-if="$route.name === 'home'" @click="logout">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>

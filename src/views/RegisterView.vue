@@ -54,7 +54,11 @@ export default defineComponent({
                     this.errorMessage = 'Passwords do not match';
                     return;
                 }
-
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(this.email)) {
+                    this.errorMessage = 'Invalid email address';
+                    return;
+                }
                 const userCredential = await firebase.createUserWithEmailAndPassword(firebase.auth, this.email, this.password);
                 const user = userCredential.user;
 
@@ -129,7 +133,7 @@ button {
 
 .error-message {
     padding: 5px;
-    color: red;
+    color: var(--accent);
 }
 
 .register-link {

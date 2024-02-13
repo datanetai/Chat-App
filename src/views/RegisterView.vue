@@ -21,7 +21,8 @@
                     <input type="password" id="confirmPassword" v-model="confirmPassword" required>
                 </div>
                 <button type="submit">Register</button>
-                <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+                <p v-if="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+                </p>
             </form>
             <div class="text-center p-1">
                 <p>Already have an account? <br> <router-link to="/login">Login</router-link></p>
@@ -65,6 +66,7 @@ export default defineComponent({
                 if (user) {
                     // Update the user's profile with the username
                     await firebase.updateProfile(user, { displayName: this.username });
+                    await firebase.auth.signOut();
                     this.$router.push('/login');
                 } else {
                     this.errorMessage = 'Registration failed.';

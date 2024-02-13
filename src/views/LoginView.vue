@@ -13,7 +13,8 @@
                     <input type="password" id="password" v-model="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
-                <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+                <p v-if="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+                </p>
             </form>
             <div class="text-center p-1">
                 <p class="register-link">Don't have an account? <br> <router-link to="/register">Register</router-link></p>
@@ -38,6 +39,11 @@ export default defineComponent({
     methods: {
         async login() {
             try {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(this.email)) {
+                    this.errorMessage = 'Invalid email address';
+                    return;
+                }
                 const userCredential = await firebase.signInWithEmailAndPassword(firebase.auth, this.email, this.password);
                 const user = userCredential.user;
                 console.log("user", user)

@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 /dist
-
+# my todo file
+todo.md
 # Firebase debug log
 # Logs
 logs

@@ -10,12 +10,18 @@
             <button v-if="$route.name === 'home'" @click="$emit('toggleChatHistory')">
                 <i class="fas fa-history"></i>
             </button>
+            <button @click="logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
     </nav>
 </template>
 
 <script lang="ts">
 import { useThemeStore } from '@/store/themeStore';
+import firebase from '@/firebase';
+import router from '../router';
+
 export default {
     computed: {
         theme() {
@@ -27,6 +33,14 @@ export default {
         toggleTheme() {
             const themeStore = useThemeStore();
             themeStore.toggleTheme();
+        },
+        async logout() {
+            try {
+                await firebase.auth.signOut();
+                router.push('/login');
+            } catch (error) {
+                console.error('Error signing out: ', error);
+            }
         },
     },
 };

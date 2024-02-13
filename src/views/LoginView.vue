@@ -107,7 +107,7 @@ button {
 }
 
 .error-message {
-    color: red;
+    color: var(--accent);
 }
 
 .register-link {

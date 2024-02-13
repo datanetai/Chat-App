@@ -15,12 +15,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/register',
     name: 'register',
-    component: RegisterView
+    component: RegisterView,
+    meta: { onlyGuest: true }
+
   },
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta: { onlyGuest: true }
+
   },
   // {
   //   path: '/about',
@@ -38,11 +42,13 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const onlyGuest = to.matched.some(record => record.meta.onlyGuest);
 
   firebase.auth.onAuthStateChanged(user => {
-    // console.log('user', user);
     if (requiresAuth && !user) {
       next('/login');
+    } else if (onlyGuest && user) {
+      next('/');
     } else {
       next();
     }

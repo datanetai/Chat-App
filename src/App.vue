@@ -32,7 +32,10 @@ export default {
     const state = reactive({
       sessionId: null
     });
-
+    const historyInfo = reactive({
+      sessionId: null
+    });
+    provide('historyInfo', historyInfo);
     provide('state', state);
     onMounted(() => {
       document.documentElement.dataset.theme = currentTheme.value;

@@ -43,7 +43,21 @@ export default defineComponent({
         const isGeneratingReply = ref(false); // Whether a reply is being generated
         const isloading = ref(false);
         const state = inject('state');
+        const historyInfo = inject('historyInfo');
+        // watch for historyInfo changes
+        watch(
+            () => (historyInfo as any).sessionId,
+            async (newSessionId, oldSessionId) => {
+                if (newSessionId !== oldSessionId && newSessionId) {
+                    console.log('Session ID changed:', newSessionId);
 
+                    if (newSessionId === sessionId.value) {
+                        messages.value.length = 0;
+                    }
+                }
+            },
+            { immediate: true }
+        );
         watch(
             () => (state as any).sessionId,
             async (newSessionId, oldSessionId) => {

@@ -66,7 +66,8 @@ export default defineComponent({
                 if (user) {
                     // Update the user's profile with the username
                     await firebase.updateProfile(user, { displayName: this.username });
-                  
+
+                    await firebase.sendEmailVerification(user);
                     await firebase.auth.signOut();
                     this.$router.push('/login');
                 } else {

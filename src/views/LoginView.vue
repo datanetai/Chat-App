@@ -48,8 +48,16 @@ export default defineComponent({
                 const user = userCredential.user;
                 console.log("user", user)
                 if (user) {
-                    router.push('/');
+                    if (user.emailVerified) {
+                        router.push('/');
+                    } else {
+                        this.errorMessage = 'Please verify your email address';
+                    }
                 }
+                else {
+                    this.errorMessage = 'Invalid email or password';
+                }
+
             } catch (error) {
                 this.errorMessage = (error as Error).message;
             }

@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 
-import { getAuth, connectAuthEmulator, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { connectFirestoreEmulator } from "firebase/firestore";
 
@@ -33,7 +33,8 @@ const firebase = {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     db,
-    updateProfile
+    updateProfile,
+    sendEmailVerification
 };
 
 export default firebase;

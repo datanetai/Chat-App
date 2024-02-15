@@ -96,4 +96,31 @@ async function deleteSession(sessionId: string) {
     });
 }
 
-export { addMessage, getMessagesBySessionId, getFirstMessageForEachSession, deleteSession };
+async function getMessagesCount() {
+    const auth = getAuth();
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+        throw new Error('User not authenticated');
+    }
+    const counterRef = doc(firebase.db, 'counters', userId);
+    const counterSnap = await getDoc(counterRef);
+    const count = counterSnap.exists() ? counterSnap.data().count : 0;
+    return count;
+}
+
+async function setMessagesCount(count: number) {
+    const auth = getAuth();
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+        throw new Error('User not authenticated');
+    }
+    const counterRef = doc(firebase.db, 'counters', userId);
+    await setDoc(counterRef, { count: count }, { merge: true });
+}
+
+async function getUserEmail() {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    return user?.email;
+}
+export { addMessage, getMessagesBySessionId, getFirstMessageForEachSession, deleteSession, getMessagesCount, setMessagesCount,getUserEmail };

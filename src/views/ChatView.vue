@@ -28,7 +28,8 @@ import ChatExamples from '@/components/ChatExamples.vue';
 import ChatMessageComponent from '@/components/ChatMessageComponent.vue';
 import { useTheme } from '@/composables/useTheme';
 import { useChatMessages } from '@/composables/useChatMessages';
-
+import { getMessagesCount, setMessagesCount, getUserEmail } from '@/firestoreService';
+import Swal from 'sweetalert2';
 
 export default defineComponent({
     name: 'ChatView',
@@ -109,9 +110,26 @@ export default defineComponent({
             if (event.shiftKey) {
                 this.newMessage += '\n';
             } else {
+
+
                 const message = this.newMessage;
                 this.newMessage = '';
                 if (this.isGeneratingReply) return;
+                const email = await getUserEmail();
+                const count = await getMessagesCount();
+
+                if (email !== 'ameerhamza0220@gmail.com') {
+                    if (count >= 10) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'You have reached the maximum number of messages',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+                }
+                await setMessagesCount(count + 1);
                 this.isGeneratingReply = true;
                 await this.sendMessage(message);
                 this.isGeneratingReply = false;

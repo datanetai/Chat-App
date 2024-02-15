@@ -49,6 +49,7 @@ export default defineComponent({
                 console.log("user", user)
                 if (user) {
                     if (user.emailVerified) {
+
                         router.push('/');
                     } else {
                         this.errorMessage = 'Please verify your email address';

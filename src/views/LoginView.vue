@@ -12,7 +12,11 @@
                     <label class="form-label" for="password">Password</label>
                     <input type="password" id="password" v-model="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn" :disabled="isLoading">
+                    <i v-if="isLoading" class="fas fa-spinner fa-spin"></i>
+                    Login
+                </button>
+
                 <p v-if="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
                 </p>
             </form>
@@ -33,7 +37,9 @@ export default defineComponent({
         return {
             email: '',
             password: '',
-            errorMessage: ''
+            errorMessage: '',
+            isLoading: false
+
         };
     },
     methods: {
@@ -44,6 +50,11 @@ export default defineComponent({
                     this.errorMessage = 'Invalid email address';
                     return;
                 }
+                if (this.password.length < 6) {
+                    this.errorMessage = 'Password must be at least 6 characters';
+                    return;
+                }
+                this.isLoading = true;
                 const userCredential = await firebase.signInWithEmailAndPassword(firebase.auth, this.email, this.password);
                 const user = userCredential.user;
                 console.log("user", user)
@@ -61,7 +72,10 @@ export default defineComponent({
 
             } catch (error) {
                 this.errorMessage = (error as Error).message;
+            } finally {
+                this.isLoading = false;
             }
+
         }
 
     }
@@ -127,5 +141,11 @@ button {
 
 .register-link {
     margin-top: 10px;
+}
+
+:disabled {
+    background-color: var(--text);
+    color: var(--background);
+    cursor: not-allowed;
 }
 </style>

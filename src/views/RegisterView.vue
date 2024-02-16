@@ -20,8 +20,11 @@
                     <label class="form-label" for="confirmPassword">Confirm Password</label>
                     <input type="password" id="confirmPassword" v-model="confirmPassword" required>
                 </div>
-                <button type="submit">Register</button>
-                <p v-if="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+                <button type="submit" class="btn" :disabled="isLoading">
+                    <i v-if="isLoading" class="fas fa-spinner fa-spin"></i> Register
+                </button>
+                <p v-if="errorMessage" class="error-message"><i class="fas fa-exclamation-triangle"></i> {{ errorMessage
+                }}
                 </p>
             </form>
             <div class="text-center p-1">
@@ -44,7 +47,8 @@ export default defineComponent({
             email: '',
             password: '',
             confirmPassword: '',
-            errorMessage: ''
+            errorMessage: '',
+            isLoading: false
         };
     },
     methods: {
@@ -60,6 +64,7 @@ export default defineComponent({
                     this.errorMessage = 'Invalid email address';
                     return;
                 }
+                this.isLoading = true;
                 const userCredential = await firebase.createUserWithEmailAndPassword(firebase.auth, this.email, this.password);
                 const user = userCredential.user;
 
@@ -76,6 +81,9 @@ export default defineComponent({
             } catch (error) {
                 console.error(error);
                 this.errorMessage = 'An error occurred during registration.';
+            }
+            finally {
+                this.isLoading = false;
             }
         }
     }
@@ -142,5 +150,11 @@ button {
 
 .register-link {
     margin-top: 10px;
+}
+
+:disabled {
+    background-color: var(--text);
+    color: var(--background);
+    cursor: not-allowed;
 }
 </style>

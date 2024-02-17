@@ -1,12 +1,11 @@
 import * as functions from 'firebase-functions';
 import axios from 'axios';
 
-
-// functions/index.js
-if (functions.config().mixtral === undefined) {
-    const runtimeConfig = require('./.runtimeconfig.json');
-    functions.config().mixtral = runtimeConfig.mixtral;
-}
+// // functions/index.js
+// if (functions.config().mixtral === undefined) {
+//     const runtimeConfig = require('./.runtimeconfig.json');
+//     functions.config().mixtral = runtimeConfig.mixtral;
+// }
 exports.generateReply = functions.https.onCall(async (data, context) => {
     return new Promise(async (resolve, reject) => {
         if (!context.auth) {

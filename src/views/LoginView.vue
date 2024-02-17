@@ -60,10 +60,11 @@ export default defineComponent({
                 console.log("user", user)
                 if (user) {
                     if (user.emailVerified) {
-
                         router.push('/');
                     } else {
+                        await firebase.auth.signOut();
                         this.errorMessage = 'Please verify your email address';
+
                     }
                 }
                 else {

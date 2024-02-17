@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "ai-chat-app-5a8ef"
-  }
+    "default": "ai-chat-app-5a8ef",
+    "staging": "ai-chat-app-5a8ef"
+  },
+  "targets": {},
+  "etags": {}
 }

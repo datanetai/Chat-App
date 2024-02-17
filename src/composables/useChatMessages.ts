@@ -3,7 +3,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatMessage, MessagesHistory } from '@/types';
 import { addMessage, getMessagesBySessionId } from '@/firestoreService';
-
+import firebase from "@/firebase";
 export function useChatMessages() {
     const messages = ref<ChatMessage[]>([]);
     const sessionId = ref<string>(uuidv4());
@@ -50,28 +50,9 @@ export function useChatMessages() {
             role: 'user',
             content: message
         });
-        const response = await axios.post('https://api.fireworks.ai/inference/v1/chat/completions', {
-            model: "accounts/fireworks/models/mixtral-8x7b-instruct",
-            stream: false,
-            n: 1,
-            messages: messageHistory,
-            top_p: 1,
-            top_k: 40,
-            presence_penalty: 0,
-            frequency_penalty: 0,
-            context_length_exceeded_behavior: "truncate",
-            temperature: 0.9,
-            max_tokens: 32768
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'text/event-stream',
-                'Authorization': process.env.VUE_APP_MIXTRAL_KEY
-            }
-        });
-
-        const replyText = response.data.choices[0].message.content;
-        return replyText;
+        const result = await firebase.generateReplyFunction({ messageHistory });
+        console.log(result);
+        return (result.data as { reply: string }).reply;
     };
 
     const sendMessage = async (message: string) => {
